@@ -9,5 +9,7 @@ module CUDD
     end
 
     include("ADD.jl")
+    include("ADD_apply.jl")
+    include("ADD_find.jl")
 
 end # end module

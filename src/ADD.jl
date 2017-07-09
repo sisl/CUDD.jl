@@ -3,8 +3,6 @@ export CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS
 export initilize_cudd
 export add_var, add_ith_var, add_level_var, add_const, add_constraint
 export cudd_ref
-export add_apply
-export add_plus, add_minus, add_times, add_divide, add_diff
 
 mutable struct Manager
 end
@@ -72,47 +70,3 @@ end
 function cudd_ref(n::Ptr{Node})
     res = ccall((:Cudd_Ref, _LIB_CUDD), Void, (Ptr{Node},), n)
 end
-
-function add_apply(mgr::Ptr{Manager}, op::Ptr{Void}, f::Ptr{Node}, g::Ptr{Node})
-    res = ccall((:Cudd_addApply, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Void}, Ptr{Node}, Ptr{Node}), mgr, op, f, g)
-    if res == C_NULL # Fails to compute a result
-        throw(OutOfMemoryError())
-    end
-    return res
-end
-
-function add_plus(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addPlus, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_plus_c = cfunction(add_plus, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_minus(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addMinus, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_minus_c = cfunction(add_minus, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_times(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addTimes, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_times_c = cfunction(add_times, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_divide(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addDivide, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_divide_c = cfunction(add_divide, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_diff(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addDiff, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_diff_c = cfunction(add_diff, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
