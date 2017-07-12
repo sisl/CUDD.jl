@@ -10,6 +10,9 @@ end
 mutable struct Node
 end
 
+mutable struct FILE
+end
+
 const CUDD_UNIQUE_SLOTS = 256
 const CUDD_CACHE_SLOTS  = 262144
 
@@ -77,4 +80,11 @@ end
 
 function recursive_deref(table::Ptr{Manager}, n::Ptr{Node})
     ccall((:Cudd_RecursiveDeref, _LIB_CUDD), Void, (Ptr{Manager}, Ptr{Node}), table, n)
+end
+
+function output_dot(mgr::Ptr{Manager}, f::Ptr{Node}, filename::String)
+    outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
+    ccall((:Cudd_DumpDot, _LIB_CUDD), Cint, (Ptr{Manager}, Cint, Ref{Ptr{Node}},
+        Ptr{Ptr{UInt8}}, Ptr{Ptr{UInt8}}, Ptr{FILE}), mgr, 1, f, C_NULL, C_NULL, outfile)
+    ccall(:fclose, Cint, (Ptr{FILE},), outfile)
 end
