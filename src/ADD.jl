@@ -67,14 +67,14 @@ function add_constraint(mgr::Ptr{Manager}, f::Ptr{Node}, c::Ptr{Node})
     return constraint
 end
 
-function cudd_ref(n::Ptr{Node})
+function ref(n::Ptr{Node})
     ccall((:Cudd_Ref, _LIB_CUDD), Void, (Ptr{Node},), n)
 end
 
-function cudd_deref(n::Ptr{Node})
+function deref(n::Ptr{Node})
     ccall((:Cudd_Deref, _LIB_CUDD), Void, (Ptr{Node},), n)
 end
 
-function cudd_recursive_deref(table::Ptr{Manager}, n::Ptr{Node})
+function recursive_deref(table::Ptr{Manager}, n::Ptr{Node})
     ccall((:Cudd_RecursiveDeref, _LIB_CUDD), Void, (Ptr{Manager}, Ptr{Node}), table, n)
 end
