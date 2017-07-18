@@ -86,5 +86,11 @@ function output_dot(mgr::Ptr{Manager}, f::Ptr{Node}, filename::String)
     outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
     ccall((:Cudd_DumpDot, _LIB_CUDD), Cint, (Ptr{Manager}, Cint, Ref{Ptr{Node}},
         Ptr{Ptr{UInt8}}, Ptr{Ptr{UInt8}}, Ptr{FILE}), mgr, 1, f, C_NULL, C_NULL, outfile)
+    ccall(:fclose, Cint, (Ptr{FILE},), outfile)  # here returns 0 suggesting the file is successfully closed
+end
+
+function output_stats(mgr::Ptr{Manager}, filename::String)
+    outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
+    ccall((:Cudd_PrintInfo, _LIB_CUDD), Cint, (Ptr{Manager}, Ptr{FILE}), mgr, outfile)
     ccall(:fclose, Cint, (Ptr{FILE},), outfile)
 end
