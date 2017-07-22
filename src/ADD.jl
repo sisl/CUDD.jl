@@ -62,12 +62,30 @@ function add_const(mgr::Ptr{Manager}, c::Real)
 end
 
 function add_constraint(mgr::Ptr{Manager}, f::Ptr{Node}, c::Ptr{Node})
-    constraint = ccall((:Cudd_addConstrain, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Node}), mgr, f, g)
-    if constraint == C_NULL
+    res = ccall((:Cudd_addConstrain, _LIB_CUDD),
+        Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Node}), mgr, f, c)
+    if res == C_NULL
         throw(OutOfMemoryError())
     end
-    return constraint
+    return res
+end
+
+function add_restrict(mgr::Ptr{Manager}, f::Ptr{Node}, c::Ptr{Node})
+    res = ccall((:Cudd_addRestrict, _LIB_CUDD),
+        Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Node}), mgr, f, c)
+    if res == C_NULL
+        throw(OutOfMemoryError())
+    end
+    return res
+end
+
+function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Int})
+    res = ccall((:Cudd_Eval, _LIB_CUDD),
+        Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Cint}), mgr, f, assignment)
+    if res == C_NULL
+        throw(OutOfMemoryError())
+    end
+    return res
 end
 
 function ref(n::Ptr{Node})
