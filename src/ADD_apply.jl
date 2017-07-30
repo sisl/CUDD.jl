@@ -1,9 +1,9 @@
 export add_apply
-export add_plus, add_minus, add_times, add_divide, add_diff
-export add_threshold, add_setNZ
-export add_minimum, add_maximum, add_one_zero_maximum
-export add_or, add_nand, add_nor, add_xor, add_xnor
-export add_log
+export add_plus_c, add_minus_c, add_times_c, add_divide_c, add_diff_c
+export add_threshold_c, add_setnz_c
+export add_minimum_c, add_maximum_c, add_one_zero_maximum_c
+export add_or_c, add_nand_c, add_nor_c, add_xor_c, add_xnor_c
+export add_log_c
 
 function add_apply(mgr::Ptr{Manager}, op::Ptr{Void}, f::Ptr{Node}, g::Ptr{Node})
     res = ccall((:Cudd_addApply, _LIB_CUDD),

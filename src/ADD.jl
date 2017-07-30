@@ -2,7 +2,9 @@ export Manager, Node
 export CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS
 export initilize_cudd
 export add_var, add_ith_var, add_level_var, add_const, add_constraint
-export cudd_ref
+export ref, deref, recursive_deref
+export get_value, is_const, is_nonconst, read_index, node_count
+export output_dot, output_stats
 
 mutable struct Manager
 end
