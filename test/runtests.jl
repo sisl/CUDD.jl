@@ -31,11 +31,62 @@ using Base.Test
     end
 end
 
-@testset "output files" begin
+@testset "outputting files" begin
     manager = initilize_cudd()
     g = add_var(manager)
     @test output_dot(manager, g, "test.dot") == 1
     rm("test.dot")
     @test output_stats(manager, "stats") == 1
     rm("stats")
+end
+
+@testset "addition testing" begin
+    manager = initilize_cudd()
+    f = add_ith_var(manager, 1)
+    ref(f)
+    for i = 2:10
+        x = add_ith_var(manager, i)
+        ref(x)
+        tmp = add_apply(manager, add_plus_c, f, x)
+        ref(tmp)
+        recursive_deref(manager, x)
+        recursive_deref(manager, f)
+        f = tmp
+    end
+    assignment = Int[]
+    res = 0
+    for i = 1:10
+        generated = rand(0:1)
+        push!(assignment, generated)
+        res += generated
+    end
+    push!(assignment, 0)
+    cudd_res = evaluate(manager, f, assignment)
+    value = convert(Int, get_value(cudd_res))
+    @test value == res
+end
+
+@testset "multiplication testing" begin
+    manager = initilize_cudd()
+    f = add_ith_var(manager, 1)
+    ref(f)
+    for i = 2:10
+        x = add_ith_var(manager, i)
+        ref(x)
+        tmp = add_apply(manager, add_times_c, f, x)
+        ref(tmp)
+        recursive_deref(manager, x)
+        recursive_deref(manager, f)
+        f = tmp
+    end
+    assignment = Int[]
+    res = 0
+    for i = 1:10
+        generated = rand(0:1)
+        push!(assignment, generated)
+        res *= generated
+    end
+    cudd_res = evaluate(manager, f, assignment)
+    value = convert(Int, get_value(cudd_res))
+    @test value == res
 end

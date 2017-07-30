@@ -3,6 +3,7 @@ export CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS
 export initilize_cudd
 export add_var, add_ith_var, add_level_var, add_const, add_constraint
 export ref, deref, recursive_deref
+export add_constraint, add_restrict, evaluate
 export get_value, is_const, is_nonconst, read_index, node_count
 export output_dot, output_stats
 
