@@ -134,6 +134,7 @@ end
 
 function output_stats(mgr::Ptr{Manager}, filename::String)
     outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
-    ccall((:Cudd_PrintInfo, _LIB_CUDD), Cint, (Ptr{Manager}, Ptr{FILE}), mgr, outfile)
+    res = ccall((:Cudd_PrintInfo, _LIB_CUDD), Cint, (Ptr{Manager}, Ptr{FILE}), mgr, outfile)
     ccall(:fclose, Cint, (Ptr{FILE},), outfile)
+    return res
 end
