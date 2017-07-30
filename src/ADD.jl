@@ -100,11 +100,36 @@ function recursive_deref(table::Ptr{Manager}, n::Ptr{Node})
     ccall((:Cudd_RecursiveDeref, _LIB_CUDD), Void, (Ptr{Manager}, Ptr{Node}), table, n)
 end
 
+function get_value(c::Ptr{Node})
+    res = ccall((:Cudd_V, _LIB_CUDD), Cdouble, (Ptr{Node},), c)
+    if res == C_NULL
+        throw(OutOfMemoryError())
+    end
+    return res
+end
+
+function is_const(n::Ptr{Node})
+    return ccall((:Cudd_IsConstant, _LIB_CUDD), Cint, (Ptr{Node},), n)
+end
+
+function is_nonconst(n::Ptr{Node})
+    return ccall((:Cudd_IsNonConstant, _LIB_CUDD), Cint, (Ptr{Node},), n)
+end
+
+function read_index(n::Ptr{Node})
+    return ccall((:Cudd_NodeReadIndex, _LIB_CUDD), Cuint, (Ptr{Node},), n)
+end
+
+function node_count(mgr::Ptr{Manager})
+    return ccall((:Cudd_ReadNodeCount, _LIB_CUDD), Clong, (Ptr{Manager},), mgr)
+end
+
 function output_dot(mgr::Ptr{Manager}, f::Ptr{Node}, filename::String)
     outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
-    ccall((:Cudd_DumpDot, _LIB_CUDD), Cint, (Ptr{Manager}, Cint, Ref{Ptr{Node}},
+    res = ccall((:Cudd_DumpDot, _LIB_CUDD), Cint, (Ptr{Manager}, Cint, Ref{Ptr{Node}},
         Ptr{Ptr{UInt8}}, Ptr{Ptr{UInt8}}, Ptr{FILE}), mgr, 1, f, C_NULL, C_NULL, outfile)
     ccall(:fclose, Cint, (Ptr{FILE},), outfile)  # here returns 0 suggesting the file is successfully closed
+    return res
 end
 
 function output_stats(mgr::Ptr{Manager}, filename::String)
