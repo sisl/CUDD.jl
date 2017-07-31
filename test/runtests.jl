@@ -42,9 +42,9 @@ end
 
 @testset "addition testing" begin
     manager = initilize_cudd()
-    f = add_ith_var(manager, 1)
+    f = add_ith_var(manager, 0)
     ref(f)
-    for i = 2:10
+    for i = 1:100
         x = add_ith_var(manager, i)
         ref(x)
         tmp = add_apply(manager, add_plus_c, f, x)
@@ -53,24 +53,36 @@ end
         recursive_deref(manager, f)
         f = tmp
     end
-    assignment = Int[]
+    assignment = Int32[]
     res = 0
-    for i = 1:10
-        generated = rand(0:1)
+    for i = 0:100
+        generated = i%2
         push!(assignment, generated)
         res += generated
     end
-    push!(assignment, 0)
     cudd_res = evaluate(manager, f, assignment)
     value = convert(Int, get_value(cudd_res))
     @test value == res
+
+    for i = 1:10
+        assignment = Int32[]
+        res = 0
+        for i = 1:101
+            generated = rand(0:1)
+            push!(assignment, generated)
+            res += generated
+        end
+        cudd_res = evaluate(manager, f, assignment)
+        value = convert(Int, get_value(cudd_res))
+        @test value == res
+    end
 end
 
 @testset "multiplication testing" begin
     manager = initilize_cudd()
     f = add_ith_var(manager, 1)
     ref(f)
-    for i = 2:10
+    for i = 2:101
         x = add_ith_var(manager, i)
         ref(x)
         tmp = add_apply(manager, add_times_c, f, x)
@@ -79,10 +91,10 @@ end
         recursive_deref(manager, f)
         f = tmp
     end
-    assignment = Int[]
+    assignment = Int32[]
     res = 0
-    for i = 1:10
-        generated = rand(0:1)
+    for i = 1:101
+        generated = i%2
         push!(assignment, generated)
         res *= generated
     end

@@ -82,7 +82,7 @@ function add_restrict(mgr::Ptr{Manager}, f::Ptr{Node}, c::Ptr{Node})
     return res
 end
 
-function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Int})
+function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Cint})
     res = ccall((:Cudd_Eval, _LIB_CUDD),
         Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Cint}), mgr, f, assignment)
     if res == C_NULL
