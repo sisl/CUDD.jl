@@ -39,3 +39,36 @@ end
     @test output_stats(manager, "stats") == 1
     rm("stats")
 end
+
+@testset "applying functions" begin
+    manager = initilize_cudd()
+    x1, x2 = rand(1:50), rand(51:100)
+    f = add_const(manager, x1)
+    ref(f)
+    g = add_const(manager, x2)
+    ref(g)
+    res = add_apply(manager, add_plus_c, f, g)
+    @test get_value(res) == x1+x2
+
+    res = add_apply(manager, add_times_c, f, g)
+    @test get_value(res) == x1*x2
+
+    res = add_apply(manager, add_minus_c, f, g)
+    @test get_value(res) == x1-x2
+
+    res = add_apply(manager, add_divide_c, f, g)
+    @test get_value(res) == x1/x2
+
+    res = add_apply(manager, add_diff_c, f, g)
+    @test get_value(res) == x1
+
+    smaller = add_leq(manager, f, g)
+    @test smaller == 1
+
+    bigger = add_leq(manager, g, f)
+    @test bigger == 0
+
+    deref(f)
+    deref(g)
+    recursive_deref(manager, res)
+end
