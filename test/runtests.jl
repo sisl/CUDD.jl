@@ -31,7 +31,7 @@ using Base.Test
     end
 end
 
-@testset "output files" begin
+@testset "outputting files" begin
     manager = initilize_cudd()
     g = add_var(manager)
     @test output_dot(manager, g, "test.dot") == 1
@@ -40,7 +40,7 @@ end
     rm("stats")
 end
 
-@testset "applying functions" begin
+@testset "applying constant functions" begin
     manager = initilize_cudd()
     x1, x2 = rand(1:50), rand(51:100)
     f = add_const(manager, x1)
@@ -71,4 +71,67 @@ end
     deref(f)
     deref(g)
     recursive_deref(manager, res)
+end
+
+@testset "addition testing" begin
+    manager = initilize_cudd()
+    f = add_ith_var(manager, 0)
+    ref(f)
+    for i = 1:100
+        x = add_ith_var(manager, i)
+        ref(x)
+        tmp = add_apply(manager, add_plus_c, f, x)
+        ref(tmp)
+        recursive_deref(manager, x)
+        recursive_deref(manager, f)
+        f = tmp
+    end
+    assignment = Int32[]
+    res = 0
+    for i = 0:100
+        generated = i%2
+        push!(assignment, generated)
+        res += generated
+    end
+    cudd_res = evaluate(manager, f, assignment)
+    value = convert(Int, get_value(cudd_res))
+    @test value == res
+
+    for i = 1:10
+        assignment = Int32[]
+        res = 0
+        for i = 1:101
+            generated = rand(0:1)
+            push!(assignment, generated)
+            res += generated
+        end
+        cudd_res = evaluate(manager, f, assignment)
+        value = convert(Int, get_value(cudd_res))
+        @test value == res
+    end
+end
+
+@testset "multiplication testing" begin
+    manager = initilize_cudd()
+    f = add_ith_var(manager, 1)
+    ref(f)
+    for i = 2:101
+        x = add_ith_var(manager, i)
+        ref(x)
+        tmp = add_apply(manager, add_times_c, f, x)
+        ref(tmp)
+        recursive_deref(manager, x)
+        recursive_deref(manager, f)
+        f = tmp
+    end
+    assignment = Int32[]
+    res = 0
+    for i = 1:101
+        generated = i%2
+        push!(assignment, generated)
+        res *= generated
+    end
+    cudd_res = evaluate(manager, f, assignment)
+    value = convert(Int, get_value(cudd_res))
+    @test value == res
 end

@@ -3,6 +3,7 @@ export CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS
 export initilize_cudd
 export add_var, add_ith_var, add_level_var, add_const, add_constraint
 export ref, deref, recursive_deref
+export add_constraint, add_restrict, evaluate
 export get_value, is_const, is_nonconst, read_index, node_count
 export output_dot, output_stats
 
@@ -81,7 +82,9 @@ function add_restrict(mgr::Ptr{Manager}, f::Ptr{Node}, c::Ptr{Node})
     return res
 end
 
-function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Int})
+# WARNING: the assignment array starts with the variable indexed 0;
+# hence, be sure to create the ith variable from index 0.
+function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Cint})
     res = ccall((:Cudd_Eval, _LIB_CUDD),
         Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Ptr{Cint}), mgr, f, assignment)
     if res == C_NULL
