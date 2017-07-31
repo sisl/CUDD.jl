@@ -14,6 +14,8 @@ Basic usage:
 >>> x2 = add_var(manager)
 >>> ref(x2)
 >>> f = add_apply(manager, add_plus_c, x1, x2)
+>>> get_value(evaluate(manager, f, [1, 1]))
+2
 ```
 
 For further examples, see the Julia notebook in the ``docs`` folder.
