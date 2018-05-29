@@ -5,7 +5,7 @@ if is_unix()
     cd("cudd-3.0.0/")
 
     run(`autoreconf -fi`)
-    run(`./configure --enable-silent-rules --enable-shared --enable-obj --with-system-qsort`)
+    run(`./configure --enable-silent-rules --enable-shared --enable-obj`)
     run(`make -j$(Sys.CPU_CORES) check`)
 
     # rename the shared library if it's ended with dylib...
