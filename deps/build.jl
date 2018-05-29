@@ -4,6 +4,7 @@ if is_unix()
     rm("cudd-3.0.0.tar.gz")
     cd("cudd-3.0.0/")
 
+    run(`./autoreconf -fi`)
     run(`./configure --enable-silent-rules --enable-shared --enable-obj --with-system-qsort`)
     run(`make -j$Sys.CPU_CORES check`)
 
