@@ -1,11 +1,12 @@
 if is_unix()
-    download("ftp://vlsi.colorado.edu/pub/cudd-3.0.0.tar.gz", "cudd-3.0.0.tar.gz")
+    download("https://github.com/kozross/cudd/archive/v3.0.0.tar.gz", "cudd-3.0.0.tar.gz")
     run(`tar -zxvf cudd-3.0.0.tar.gz`)
     rm("cudd-3.0.0.tar.gz")
     cd("cudd-3.0.0/")
 
+    run(`autoreconf -fi`)
     run(`./configure --enable-silent-rules --enable-shared --enable-obj`)
-    run(`make -j4 check`)
+    run(`make -j$(Sys.CPU_CORES) check`)
 
     # rename the shared library if it's ended with dylib...
     cd("cudd/.libs")
