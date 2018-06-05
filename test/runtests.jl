@@ -3,7 +3,7 @@ using Base.Test
 
 @testset "addind vars" begin
     for i = 1:10
-        manager = initilize_cudd()
+        manager = initialize_cudd()
         rnd = rand(1:100)
         for i = 1:rnd
             add_var(manager)
@@ -12,13 +12,13 @@ using Base.Test
     end
 
     for i = 1:10
-        manager = initilize_cudd()
+        manager = initialize_cudd()
         rnd = rand(i*10:i*10+9)
         indexed_var = add_ith_var(manager, rnd)
         @test read_index(indexed_var) == rnd
     end
 
-    manager = initilize_cudd()
+    manager = initialize_cudd()
     for i = 1:10
         new_nonconst = add_var(manager)
         @test is_nonconst(new_nonconst) == 1
@@ -32,7 +32,7 @@ using Base.Test
 end
 
 @testset "outputting files" begin
-    manager = initilize_cudd()
+    manager = initialize_cudd()
     g = add_var(manager)
     @test output_dot(manager, g, "test.dot") == 1
     rm("test.dot")
@@ -41,7 +41,7 @@ end
 end
 
 @testset "applying constant functions" begin
-    manager = initilize_cudd()
+    manager = initialize_cudd()
     x1, x2 = rand(1:50), rand(51:100)
     f = add_const(manager, x1)
     ref(f)
@@ -74,7 +74,7 @@ end
 end
 
 @testset "addition testing" begin
-    manager = initilize_cudd()
+    manager = initialize_cudd()
     f = add_ith_var(manager, 0)
     ref(f)
     for i = 1:100
@@ -112,7 +112,7 @@ end
 end
 
 @testset "multiplication testing" begin
-    manager = initilize_cudd()
+    manager = initialize_cudd()
     f = add_ith_var(manager, 1)
     ref(f)
     for i = 2:101

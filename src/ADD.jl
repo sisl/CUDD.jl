@@ -1,6 +1,6 @@
 export Manager, Node
 export CUDD_UNIQUE_SLOTS, CUDD_CACHE_SLOTS
-export initilize_cudd
+export initialize_cudd
 export add_var, add_ith_var, add_level_var, add_const, add_constraint
 export ref, deref, recursive_deref
 export add_constraint, add_restrict, evaluate
@@ -19,7 +19,7 @@ end
 const CUDD_UNIQUE_SLOTS = 256
 const CUDD_CACHE_SLOTS  = 262144
 
-function initilize_cudd()
+function initialize_cudd()
     dd_manager = ccall((:Cudd_Init, _LIB_CUDD),
         Ptr{Manager}, (Cuint, Cuint, Cuint, Cuint, Csize_t), 0,0,CUDD_UNIQUE_SLOTS,CUDD_CACHE_SLOTS,0) # default in CUDD
     if dd_manager == C_NULL # Could not allocate memory
