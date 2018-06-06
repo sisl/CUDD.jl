@@ -11,7 +11,7 @@ C library to manipulate Algebraic Decision Diagrams (ADDs).
 Basic usage:
 ```julia
 >>> using CUDD
->>> manager = initilize_cudd()
+>>> manager = initialize_cudd()
 >>> x1 = add_var(manager)
 >>> ref(x1)
 >>> x2 = add_var(manager)
