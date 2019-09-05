@@ -94,15 +94,15 @@ function evaluate(mgr::Ptr{Manager}, f::Ptr{Node}, assignment::Array{Cint})
 end
 
 function ref(n::Ptr{Node})
-    ccall((:Cudd_Ref, _LIB_CUDD), Void, (Ptr{Node},), n)
+    ccall((:Cudd_Ref, _LIB_CUDD), Cvoid, (Ptr{Node},), n)
 end
 
 function deref(n::Ptr{Node})
-    ccall((:Cudd_Deref, _LIB_CUDD), Void, (Ptr{Node},), n)
+    ccall((:Cudd_Deref, _LIB_CUDD), Cvoid, (Ptr{Node},), n)
 end
 
 function recursive_deref(table::Ptr{Manager}, n::Ptr{Node})
-    ccall((:Cudd_RecursiveDeref, _LIB_CUDD), Void, (Ptr{Manager}, Ptr{Node}), table, n)
+    ccall((:Cudd_RecursiveDeref, _LIB_CUDD), Cvoid, (Ptr{Manager}, Ptr{Node}), table, n)
 end
 
 function get_value(c::Ptr{Node})
