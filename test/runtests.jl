@@ -1,5 +1,5 @@
 using CUDD
-using Base.Test
+using CUDD.Compat.Test
 
 @testset "addind vars" begin
     for i = 1:10
@@ -41,6 +41,7 @@ end
 end
 
 @testset "applying constant functions" begin
+
     manager = initialize_cudd()
     x1, x2 = rand(1:50), rand(51:100)
     f = add_const(manager, x1)

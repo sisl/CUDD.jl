@@ -5,130 +5,44 @@ export add_minimum_c, add_maximum_c, add_one_zero_maximum_c
 export add_or_c, add_nand_c, add_nor_c, add_xor_c, add_xnor_c
 export add_log_c
 
-function add_apply(mgr::Ptr{Manager}, op::Ptr{Void}, f::Ptr{Node}, g::Ptr{Node})
+function add_apply(mgr::Ptr{Manager}, op::Ref, f::Ptr{Node}, g::Ptr{Node})
     res = ccall((:Cudd_addApply, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Void}, Ptr{Node}, Ptr{Node}), mgr, op, f, g)
+        Ptr{Node}, (Ptr{Manager}, Ptr{Cvoid}, Ptr{Node}, Ptr{Node}), mgr, op[], f, g)
     if res == C_NULL # Fails to compute a result
         throw(OutOfMemoryError())
     end
     return res
 end
 
-function add_plus(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addPlus, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_plus_c = cfunction(add_plus, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
+add_apply_func_names = [(:add_plus, :Cudd_addPlus),
+                        (:add_minus, :Cudd_addMinus),
+                        (:add_times, :Cudd_addTimes),
+                        (:add_divide, :Cudd_addDivide),
+                        (:add_diff, :Cudd_addDiff),
+                        (:add_threshold, :Cudd_addThreshold),
+                        (:add_setNZ, :Cudd_addSetNZ),
+                        (:add_minimum, :Cudd_addMinimum),
+                        (:add_maximum, :Cudd_addMaximum),
+                        (:add_one_zero_maximum, :Cudd_addOneZeroMaximum),
+                        (:add_agreement, :Cudd_addAgreement),
+                        (:add_or, :Cudd_addOr),
+                        (:add_nand, :Cudd_addNand),
+                        (:add_nor, :Cudd_addNor),
+                        (:add_xor, :Cudd_addXor),
+                        (:add_xnor, :Cudd_addXnor),
+                        (:add_log, :Cudd_addLog)]
 
-function add_minus(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addMinus, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_minus_c = cfunction(add_minus, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
+for (name, Cudd_name) in add_apply_func_names
+    @eval $name(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}}) =
+                ccall(($(QuoteNode(Cudd_name)), _LIB_CUDD),
+                      Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
 
-function add_times(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addTimes, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
+    # these Refs should get filled in __init__()
+    @eval const $(Symbol(name, "_c")) = Ref{Ptr{Cvoid}}()
 end
-add_times_c = cfunction(add_times, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
 
-function add_divide(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addDivide, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
+function __init__()
+    for (name, _) in add_apply_func_names
+        @eval $(Symbol(name, "_c"))[] = Compat.@cfunction($name, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
+    end
 end
-add_divide_c = cfunction(add_divide, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_diff(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addDiff, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_diff_c = cfunction(add_diff, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_threshold(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addThreshold, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_threshold_c = cfunction(add_threshold, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_setNZ(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addSetNZ, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_setnz_c = cfunction(add_setNZ, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_minimum(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addMinimum, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_minimum_c = cfunction(add_minimum, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_maximum(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addMaximum, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_maximum_c = cfunction(add_maximum, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_one_zero_maximum(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addOneZeroMaximum, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_one_zero_maximum_c = cfunction(add_one_zero_maximum, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_agreement(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addAgreement, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_agreement_c = cfunction(add_agreement, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_or(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addOr, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_or_c = cfunction(add_or, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_nand(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addNand, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_nand_c = cfunction(add_nand, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_nor(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addNor, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_nor_c = cfunction(add_nor, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_xor(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addXor, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_xor_c = cfunction(add_xor, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_xnor(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addXnor, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_xnor_c = cfunction(add_xnor, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
-
-function add_log(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}})
-    func = ccall((:Cudd_addLog, _LIB_CUDD),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
-    return func
-end
-add_log_c = cfunction(add_log, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
