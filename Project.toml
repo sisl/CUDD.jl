@@ -1,5 +1,6 @@
 name = "CUDD"
 uuid = "345a2cc7-28d8-58b2-abdf-cff77ea7d7f1"
+version = "0.1.2"
 
 [deps]
 Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
