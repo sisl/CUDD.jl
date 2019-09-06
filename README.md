@@ -27,7 +27,7 @@ Setup
 -----
 
 Requirements:
- - Julia 0.6
+ - Julia ≥0.6
  - A standard build environment (make, gcc, etc.)
 
 To install the CUDD module:
