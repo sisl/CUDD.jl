@@ -5,7 +5,6 @@ os:
   - linux
 julia:
   - 0.6
-  - 0.7
   - 1.0
   - 1.1
   - 1.2
@@ -20,7 +19,6 @@ git:
 matrix:
   allow_failures:
   - julia: nightly
-  - julia: 0.7
   - julia: 1.0
   - julia: 1.1
   - julia: 1.2
