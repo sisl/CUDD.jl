@@ -23,16 +23,12 @@ Basic usage:
 
 For further examples, see the Julia notebook in the ``docs`` folder.
 
-Setup
+Installation
 -----
 
-Requirements:
- - Julia ≥0.6
- - A standard build environment (make, gcc, etc.)
-
-To install the CUDD module:
-
-    $ Pkg.add("CUDD")
+```julia
+using Pkg; Pkg.add("CUDD")
+```
 
 License
 -------
