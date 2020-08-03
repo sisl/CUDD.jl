@@ -115,10 +115,7 @@ end
 
 function output_dot(mgr::Ptr{Manager}, f::Ptr{Node}, filename::String)
     outfile = ccall(:fopen, Ptr{FILE}, (Cstring, Cstring), filename, "w")
-    @show outfile
-    @show mgr
-    @show f
-    res = Cudd_DumpDot(mgr, 1, f, C_NULL, C_NULL, outfile)
+    res = Cudd_DumpDot(mgr, 1, Ref(f), C_NULL, C_NULL, outfile)
     ccall(:fclose, Cint, (Ptr{FILE},), outfile)  # here returns 0 suggesting the file is successfully closed
     return res
 end
