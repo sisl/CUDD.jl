@@ -1,5 +1,5 @@
+using Test
 using CUDD
-using CUDD.Compat.Test
 
 @testset "addind vars" begin
     for i = 1:10
@@ -33,7 +33,9 @@ end
 
 @testset "outputting files" begin
     manager = initialize_cudd()
+    @show manager
     g = add_var(manager)
+    @show g
     @test output_dot(manager, g, "test.dot") == 1
     rm("test.dot")
     @test output_stats(manager, "stats") == 1

@@ -1,8 +1,7 @@
 export add_negate, add_round_off
 
 function add_negate(mgr::Ptr{Manager}, f::Ptr{Node})
-    result = ccall((:Cudd_addNegate, libcudd),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Node}), mgr, f)
+    result = Cudd_addNegate(mgr, f)
     if result == C_NULL
         throw(OutOfMemoryError())
     end
@@ -10,8 +9,7 @@ function add_negate(mgr::Ptr{Manager}, f::Ptr{Node})
 end
 
 function add_round_off(mgr::Ptr{Manager}, f::Ptr{Node}, n::Int)
-    result = ccall((:Cudd_addRoundOff, libcudd),
-        Ptr{Node}, (Ptr{Manager}, Ptr{Node}, Cuint), mgr, f, n)
+    result = Cudd_addRoundOff(mgr, f, n)
     if result == C_NULL
         throw(OutOfMemoryError())
     end
