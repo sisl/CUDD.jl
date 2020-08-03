@@ -20,5 +20,16 @@ include("ADD_ITE.jl")
 include("ADD_negate.jl")
 include("ADD_walsh.jl")
 
+using CEnum
+
+include(joinpath(@__DIR__, "gen", "libcudd_common.jl"))
+include(joinpath(@__DIR__, "gen", "libcudd_api.jl"))
+
+# export everything
+foreach(names(@__MODULE__, all=true)) do s
+    if startswith(string(s), "SOME_PREFIX")
+        @eval export $s
+    end
+end
 
 end # module
