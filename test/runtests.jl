@@ -7,9 +7,10 @@ using CUDD
     y = Cudd_bddNewVar(manager)
     for v in [x, y]
         @test Cudd_bddIsVar(manager, v) == 1
-        @test Cudd_bddIsPiVar(manager, v) == -1
-        @test Cudd_bddIsPsVar(manager, v) == -1
-        @test Cudd_bddIsNsVar(manager, v) == -1
+        index = Cudd_NodeReadIndex(v)
+        @test Cudd_bddIsPiVar(manager, index) == 1
+        @test Cudd_bddIsPsVar(manager, index) == 0
+        @test Cudd_bddIsNsVar(manager, index) == 0
         @test Cudd_IsConstant(v) == 0
         @test Cudd_IsNonConstant(v) == 1
     end
