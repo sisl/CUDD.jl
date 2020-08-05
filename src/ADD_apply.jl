@@ -34,8 +34,7 @@ add_apply_func_names = [(:add_plus, :Cudd_addPlus),
 
 for (name, Cudd_name) in add_apply_func_names
     @eval $name(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}}) =
-                ccall(($(QuoteNode(Cudd_name)), libcudd),
-                      Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}), mgr, f_pp, g_pp)
+                $Cudd_name(mgr, f_pp, g_pp)
 
     # these Refs should get filled in __init__()
     @eval const $(Symbol(name, "_c")) = Ref{Ptr{Cvoid}}()
@@ -43,6 +42,6 @@ end
 
 function __init__()
     for (name, _) in add_apply_func_names
-        @eval $(Symbol(name, "_c"))[] = Compat.@cfunction($name, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
+        @eval $(Symbol(name, "_c"))[] = @cfunction($name, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
     end
 end
