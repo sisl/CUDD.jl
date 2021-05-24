@@ -4,7 +4,7 @@ CUDD.jl
 [![Build Status](https://travis-ci.org/sisl/CUDD.jl.svg)](https://travis-ci.org/sisl/CUDD.jl)
 [![Coverage Status](https://coveralls.io/repos/github/sisl/CUDD.jl/badge.svg?branch=master)](https://coveralls.io/github/sisl/CUDD.jl?branch=master)
 
-A Julia wrapper for the [CUDD](http://vlsi.colorado.edu/~fabio/CUDD/cudd.pdf)
+A Julia wrapper for the [CUDD](https://github.com/ivmai/cudd)
 C library to manipulate Algebraic Decision Diagrams (ADDs) and Binary Decision Diagrams (BDDs).
 
 
