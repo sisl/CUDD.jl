@@ -32,16 +32,24 @@ add_apply_func_names = [(:add_plus, :Cudd_addPlus),
                         (:add_xnor, :Cudd_addXnor),
                         (:add_log, :Cudd_addLog)]
 
+add_apply_func_ptr_refs = Dict{Function, Ref{Base.CFunction}}()
+
 for (name, Cudd_name) in add_apply_func_names
+
+    # define new names without the `Cudd_`
     @eval $name(mgr::Ptr{Manager}, f_pp::Ptr{Ptr{Node}}, g_pp::Ptr{Ptr{Node}}) =
                 $Cudd_name(mgr, f_pp, g_pp)
 
-    # these Refs should get filled in __init__()
-    @eval const $(Symbol(name, "_c")) = Ref{Ptr{Cvoid}}()
+    # `func` is the newly created function from above
+    func = getproperty(CUDD, name)
+
+    # These Refs must get filled in __init__(). They have names like `add_plus_c`, etc.
+    # They are in a Dict only for easier access in __init__, their binding is also global.
+    add_apply_func_ptr_refs[func] = @eval const $(Symbol(name, "_c")) = Ref{Base.CFunction}()
 end
 
 function __init__()
-    for (name, _) in add_apply_func_names
-        @eval $(Symbol(name, "_c"))[] = @cfunction($name, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
+    for (func, ref) in add_apply_func_ptr_refs
+        ref[] = @cfunction($func, Ptr{Node}, (Ptr{Manager}, Ptr{Ptr{Node}}, Ptr{Ptr{Node}}))
     end
 end
