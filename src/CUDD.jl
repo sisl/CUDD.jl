@@ -15,6 +15,17 @@ using CEnum
 include(joinpath(@__DIR__, "gen", "libcudd_common.jl"))
 include(joinpath(@__DIR__, "gen", "libcudd_api.jl"))
 
+# Missing C macros omitted by Clang.jl
+
+Cudd_Not(node) =
+    convert(Ptr{Nothing}, xor(convert(Int,node), 1))
+
+Cudd_IsComplement(node) =
+    isone(convert(Int,node) & 1)
+
+Cudd_Regular(node) = 
+    convert(Ptr{Nothing}, convert(Int,node) & ~1)
+
 # export everything
 foreach(names(@__MODULE__, all=true)) do s
     if startswith(string(s), "Cudd_")
